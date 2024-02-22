@@ -1,0 +1,29 @@
+[project]
+name = "bluelog"
+version = "0.1.0"
+description = "Default template for PDM package"
+authors = [
+    {name = "dnsayhey", email = "yanlei921@live.com"},
+]
+dependencies = [
+    "flask>=3.0.2",
+    "flask-sqlalchemy>=3.1.1",
+    "flask-mail>=0.9.1",
+    "flask-ckeditor>=0.5.1",
+    "flask-moment>=1.0.5",
+    "bootstrap-flask>=2.3.3",
+    "python-dotenv>=1.0.1",
+]
+requires-python = ">=3.8"
+readme = "README.md"
+license = {text = "MIT"}
+
+
+[tool.pdm]
+distribution = false
+
+[tool.pdm.dev-dependencies]
+dev = [
+    "watchdog>=4.0.0",
+    "faker>=23.2.1",
+]
