@@ -1,3 +1,7 @@
 /* * {
     outline: auto !important;
 } */
+
+.posts-pagination {
+    margin-top: 1rem;
+}

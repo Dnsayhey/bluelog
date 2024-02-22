@@ -4,8 +4,8 @@
 
 {% block content %}
     <div class="page-header">
-        <h1 class="display-3">{{ admin.blog_title|default('Blog Title') }}</h1>
-        <h4 class="text-muted">&nbsp;{{ admin.blog_sub_title|default('Blog Subtitle') }}</h4>
+        <h1 class="display-3">{{ category.name }}</h1>
+        <h4 class="text-muted">&nbsp;{{ category.posts|length }} posts</h4>
     </div>
     <div class="row">
         <div class="col-sm-8 posts">{% include 'blog/_posts.html' %}</div>
