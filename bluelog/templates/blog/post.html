@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+{% from 'bootstrap4/pagination.html' import render_pagination %}
+{% from 'bootstrap4/form.html' import render_form %}
+
+{% block title %}{{ post.title }}{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>{{ post.title }}</h1>
+    <small>
+        Category: <a href="{{ url_for('blog.show_category', category_id=post.category.id) }}">{{ post.category.name
+            }}</a>
+        <br>
+        <!-- todo -->
+        Date: {{ post.timestamp }}
+    </small>
+</div>
+<div class="row">
+    <div class="col-sm-8">
+        {{ post.body|safe }}
+        <hr>
+
+        <button type="button" class="btn btn-primary btn btn-primary" data-toggle="modal"
+            data-target="#exampleModal">Share</button>
+
+        <!-- Modal -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Share Your Post</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="shared-url" disabled
+                                value="{{ url_for('blog.show_post', post_id=post.id, _external=True) }}">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="cp-btn btn btn-primary" data-clipboard-target="#shared-url">Copy
+                            URL</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="comments" id="comments">
+            <h3>{{ comments|length }} Comments
+                <small>
+                    <a
+                        href="{{ url_for('blog.show_post', post_id=post.id, page=pagination.pages or 1) }}#comments">latest</a>
+                </small>
+            </h3>
+            {% if comments %}
+            <ul class="list-group">
+                {% for comment in comments %}
+                <li class="list-group-item list-group-item-action flex-column">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h5 class="mb-1">
+                            <a href="{% if comment.site %}{{ comment.site }}{% else %}#{% endif %}" target="_blank">{%
+                                if comment.from_admin %}{{ admin.name }}{% else %}{{ comment.author }}{% endif %}</a>
+                            {% if comment.from_admin %}
+                            <span class="badge badge-primary">Author</span>
+                            {% endif %}
+                            {% if comment.replied %}
+                            <span class="badge badge-light">Reply</span>
+                            {% endif %}
+                        </h5>
+                        <!-- todo -->
+                        <small>{{ comment.timestamp }}</small>
+                    </div>
+                    {% if comment.replied %}
+                    <p class="alert alert-dark reply-body">{{ comment.replied.author }}:<br>{{ comment.replied.body }}
+                    </p>
+                    {% endif %}
+                    <p class="mb-1">{{ comment.body }}</p>
+                    <div class="float-right">
+                        <a href="{{ url_for('blog.reply_comment', comment_id=comment.id) }}" class="btn btn-light btn-sm">Reply</a>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+            <div class="box-pagination">{{ render_pagination(pagination, fragment="comments") }}</div>
+            {% else %}
+            <div class="tip">
+                <h5>No comments.</h5>
+            </div>
+            {% endif %}
+        </div>
+        <div id="comment-form">
+            {% if request.args.get('reply') %}
+                <div class="alert alert-dark">
+                    Reply to <strong>{{request.args.get('author')}}</strong>:
+                    <a href="{{ url_for('blog.show_post', post_id=post.id) }}" class="float-right">Cancel</a>
+                </div>
+            {% endif %}
+            {{ render_form(form, method="post", action=request.full_path) }}
+        </div>
+    </div>
+    <div class="col-sm-4">
+        {% include 'blog/_sidebar.html' %}
+    </div>
+</div>
+<script src="{{ url_for('static', filename='js/clipboard.min.js') }}"></script>
+<script>
+    var clipboard = new ClipboardJS('.cp-btn');
+</script>
+{% endblock %}

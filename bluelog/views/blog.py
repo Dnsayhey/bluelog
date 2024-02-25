@@ -1,6 +1,19 @@
-from flask import Blueprint, render_template, request, current_app
+from flask import (
+    Blueprint,
+    render_template,
+    request,
+    current_app,
+    url_for,
+    flash,
+    redirect,
+    abort,
+    make_response
+)
 
-from bluelog.models import Admin, Category, Post
+from bluelog import db
+from bluelog.models import Category, Post, Comment
+from bluelog.forms import CommentForm, AdminCommentForm
+from bluelog.utils import redirect_back
 
 blog_bp = Blueprint("blog", __name__)
 
@@ -10,8 +23,6 @@ def index():
     page = request.args.get("page", 1, type=int)
     per_page = current_app.config.get("BLUELOG_POST_PER_PAGE", 10)
 
-    admin = Admin.query.first()
-    categories = Category.query.all()
     pagination = Post.query.order_by(Post.timestamp.desc()).paginate(
         page=page, per_page=per_page
     )
@@ -19,8 +30,6 @@ def index():
 
     return render_template(
         "blog/index.html",
-        admin=admin,
-        categories=categories,
         pagination=pagination,
         posts=posts,
     )
@@ -29,21 +38,102 @@ def index():
 @blog_bp.route("/category/<int:category_id>")
 def show_category(category_id):
     category = Category.query.get_or_404(category_id)
-    categories = Category.query.all()
     page = request.args.get("page", 1, type=int)
     per_page = current_app.config.get("BLUELOG_POST_PER_PAGE", 10)
     pagination = (
-        Post.query.filter_by(category_id=category_id)
+        Post.query.with_parent(category)
         .order_by(Post.timestamp.desc())
         .paginate(page=page, per_page=per_page)
     )
     posts = pagination.items
     return render_template(
-        "blog/category.html", category=category, pagination=pagination, posts=posts, categories=categories
+        "blog/category.html",
+        category=category,
+        pagination=pagination,
+        posts=posts,
     )
 
 
-@blog_bp.route("/post/<int:post_id>")
+@blog_bp.route("/post/<int:post_id>", methods=["GET", "POST"])
 def show_post(post_id):
     post = Post.query.get_or_404(post_id)
-    return render_template("blog/post.html", post=post)
+    page = request.args.get("page", 1, int)
+    per_page = current_app.config.get("BLUELOG_COMMENT_PER_PAGE", 20)
+    pagination = (
+        Comment.query.with_parent(post)
+        .filter_by(reviewed=True)
+        .order_by(Comment.timestamp.asc())
+        .paginate(page=page, per_page=per_page)
+    )
+    comments = pagination.items
+
+    current_user_login = True
+    if current_user_login:
+        form = AdminCommentForm()
+        form.author.data = "test"
+        form.email.data = current_app.config["BLUELOG_EMAIL"]
+        form.site.data = url_for("blog.index")
+        from_admin = True
+        reviewed = True
+    else:
+        form = CommentForm()
+        from_admin = False
+        reviewed = False
+
+    if form.validate_on_submit():
+        comment = Comment(
+            author=form.author.data,
+            body=form.body.data,
+            email=form.email.data,
+            site=form.site.data,
+            from_admin=from_admin,
+            reviewed=reviewed,
+            post_id=post_id
+        )
+        replied_comment_id = request.args.get("reply")
+        if replied_comment_id:
+            replied_comment = Comment.query.get_or_404(replied_comment_id)
+            comment.replied = replied_comment
+            # todo send_email
+        db.session.add(comment)
+        db.session.commit()
+        if current_user_login:
+            flash("Comment published.", "success")
+        else:
+            flash("Thanks, your comment will be published after reviewed.", "info")
+            # todo send_email
+        print("-----------", url_for("blog.show_post", post_id=post_id))
+        return redirect(url_for("blog.show_post", post_id=post_id))
+
+    return render_template(
+        "blog/post.html", post=post, pagination=pagination, comments=comments, form=form
+    )
+
+
+@blog_bp.route("/about")
+def about():
+    return render_template("blog/about.html")
+
+
+@blog_bp.route("/reply/comment/<int:comment_id>")
+def reply_comment(comment_id):
+    comment = Comment.query.get_or_404(comment_id)
+    return redirect(
+        url_for(
+            "blog.show_post",
+            post_id=comment.post_id,
+            reply=comment_id,
+            author=comment.author,
+        )
+        + "#comment-form"
+    )
+
+
+@blog_bp.route("/change-theme/<theme_name>")
+def change_theme(theme_name):
+    if theme_name not in current_app.config["BLUELOG_THEMES"]:
+        abort(404)
+
+    response = make_response(redirect_back())
+    response.set_cookie("theme", theme_name, max_age=30 * 24 * 60 * 60)
+    return response

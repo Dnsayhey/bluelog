@@ -9,6 +9,7 @@ from bluelog.settings import config
 from bluelog.views.admin import admin_bp
 from bluelog.views.auth import auth_bp
 from bluelog.views.blog import blog_bp
+from bluelog.models import Admin, Category
 
 
 def register_blueprints(app: Flask):
@@ -23,6 +24,14 @@ def register_extensions(app: Flask):
     db.init_app(app)
     mail.init_app(app)
     moment.init_app(app)
+
+
+def register_template_context(app: Flask):
+    @app.context_processor
+    def inject_common_objects():
+        admin = Admin.query.first()
+        categories = Category.query.all()
+        return dict(admin=admin, categories=categories)
 
 
 def register_commands(app: Flask):
@@ -58,5 +67,6 @@ def create_app(config_name=None):
     register_extensions(app)
     register_blueprints(app)
     register_commands(app)
+    register_template_context(app)
 
     return app

@@ -49,6 +49,8 @@ def fake_posts(count=50):
 
 
 def fake_comments(count=500):
+    admin = Admin.query.first()
+
     for i in range(count):
         comment = Comment(
             author=fake.name(),
@@ -75,7 +77,7 @@ def fake_comments(count=500):
         db.session.add(comment)
 
         comment = Comment(
-            author=fake.name(),
+            author=admin.name,
             email=fake.email(),
             site=fake.url(),
             body=fake.sentence(),

@@ -2,6 +2,11 @@
     outline: auto !important;
 } */
 
-.posts-pagination {
+.box-pagination {
     margin-top: 1rem;
+}
+
+.page-header {
+    margin-top: 20px;
+    margin-bottom: 20px;
 }
