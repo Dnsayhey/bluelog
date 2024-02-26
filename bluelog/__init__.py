@@ -3,13 +3,13 @@ import os
 import click
 from flask import Flask
 
+from bluelog.commands import register_commands
 from bluelog.extensions import bootstrap, ckeditor, db, mail, moment
-from bluelog.fakes import fake_admin, fake_categories, fake_comments, fake_posts
+from bluelog.models import Admin, Category
 from bluelog.settings import config
 from bluelog.views.admin import admin_bp
 from bluelog.views.auth import auth_bp
 from bluelog.views.blog import blog_bp
-from bluelog.models import Admin, Category
 
 
 def register_blueprints(app: Flask):
@@ -32,29 +32,6 @@ def register_template_context(app: Flask):
         admin = Admin.query.first()
         categories = Category.query.all()
         return dict(admin=admin, categories=categories)
-
-
-def register_commands(app: Flask):
-
-    @app.cli.command()
-    @click.option(
-        "--category", default=10, help="Quantity of categories, default is 10."
-    )
-    @click.option("--post", default=50, help="Quantity of posts, default is 50.")
-    @click.option(
-        "--comment", default=500, help="Quantity of comments, default is 500."
-    )
-    def forge(category, post, comment):
-        """Forge: admin categories posts comments"""
-        db.drop_all()
-        db.create_all()
-
-        fake_admin()
-        fake_categories(category)
-        fake_posts(post)
-        fake_comments(comment)
-
-        click.echo("Done!")
 
 
 def create_app(config_name=None):

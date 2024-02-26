@@ -16,7 +16,7 @@
     </button>
     <div class="dropdown-menu">
         {% for theme_name, theme_display_name in config.BLUELOG_THEMES.items() %}
-        <a class="dropdown-item {% if request.cookies.get('theme', 'perfect_blue') == theme_name %}active{% endif %}" href="{{ url_for('blog.change_theme', theme_name=theme_name) }}">{{ theme_display_name }}</a>
+        <a class="dropdown-item {% if request.cookies.get('theme', 'perfect_blue') == theme_name %}active{% endif %}" href="{{ url_for('blog.change_theme', theme_name=theme_name, next=request.path) }}">{{ theme_display_name }}</a>
         {% endfor %}
     </div>
   </div>

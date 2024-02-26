@@ -5,7 +5,7 @@
 groups = ["default", "dev"]
 strategy = ["cross_platform", "inherit_metadata"]
 lock_version = "4.4.1"
-content_hash = "sha256:6fee6356853783c2893f4520d3ca32cde47545d569d2deb031ea2916cca38eec"
+content_hash = "sha256:e1c9879bdd2b527052a680dfedd3c2917cad41d0a42c45ee79a43c24f68e2e28"
 
 [[package]]
 name = "blinker"
@@ -103,6 +103,21 @@ dependencies = [
 files = [
     {file = "Flask-CKEditor-0.5.1.tar.gz", hash = "sha256:15c8a54a0967cc51b6fa8191ab5fa042e7ee486d6d420c4d5f509a357557c278"},
     {file = "Flask_CKEditor-0.5.1-py2.py3-none-any.whl", hash = "sha256:330b10f1364a5ef990fd1de72429bb03e4a1ab6ee3aec85f7b38656315dd07fd"},
+]
+
+[[package]]
+name = "flask-login"
+version = "0.6.3"
+requires_python = ">=3.7"
+summary = "User authentication and session management for Flask."
+groups = ["default"]
+dependencies = [
+    "Flask>=1.0.4",
+    "Werkzeug>=1.0.1",
+]
+files = [
+    {file = "Flask-Login-0.6.3.tar.gz", hash = "sha256:5e23d14a607ef12806c699590b89d0f0e0d67baeec599d75947bf9c147330333"},
+    {file = "Flask_Login-0.6.3-py3-none-any.whl", hash = "sha256:849b25b82a436bf830a054e74214074af59097171562ab10bfa999e6b78aae5d"},
 ]
 
 [[package]]
