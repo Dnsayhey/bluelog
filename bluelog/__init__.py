@@ -1,21 +1,22 @@
 import os
 
-import click
 from flask import Flask
 
 from bluelog.commands import register_commands
-from bluelog.extensions import bootstrap, ckeditor, db, mail, moment
+from bluelog.extensions import bootstrap, ckeditor, db, mail, moment, login_manager, csrf
 from bluelog.models import Admin, Category
 from bluelog.settings import config
 from bluelog.views.admin import admin_bp
 from bluelog.views.auth import auth_bp
 from bluelog.views.blog import blog_bp
+from bluelog.views.errors import errors_bp
 
 
 def register_blueprints(app: Flask):
     app.register_blueprint(admin_bp)
     app.register_blueprint(auth_bp)
     app.register_blueprint(blog_bp)
+    app.register_blueprint(errors_bp)
 
 
 def register_extensions(app: Flask):
@@ -24,6 +25,8 @@ def register_extensions(app: Flask):
     db.init_app(app)
     mail.init_app(app)
     moment.init_app(app)
+    login_manager.init_app(app)
+    csrf.init_app(app)
 
 
 def register_template_context(app: Flask):

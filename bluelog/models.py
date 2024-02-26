@@ -3,11 +3,12 @@ from datetime import datetime
 from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import mapped_column, relationship
 from werkzeug.security import check_password_hash, generate_password_hash
+from flask_login import UserMixin
 
 from bluelog.extensions import db
 
 
-class Admin(db.Model):
+class Admin(db.Model, UserMixin):
     id = mapped_column(Integer, primary_key=True, autoincrement=True)
     username = mapped_column(String(20), unique=True)
     password_hash = mapped_column(String(128))

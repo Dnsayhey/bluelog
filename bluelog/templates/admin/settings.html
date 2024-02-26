@@ -1,8 +1,10 @@
 {% extends 'base.html' %}
 {% from 'bootstrap4/form.html' import render_form %}
 
-{% block title %}Login{% endblock %}
+{% block title %}Settings{% endblock %}
 
 {% block content %}
-    {{ render_form(form) }}
+    <div>
+        {{ render_form(form) }}
+    </div>
 {% endblock %}
