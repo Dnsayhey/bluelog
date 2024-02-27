@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Categories{% endblock %}
+
+{% block content %}
+    <div class="page-header">
+        <h1>Categories
+            <small class="text-muted">{{ categories|length }}</small>
+            <span class="float-right"><a href="{{ url_for('admin.new_category') }}" class="btn btn-primary">New Category</a></span>
+        </h1>
+    </div>
+    {% if categories %}
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>No.</th>
+                    <th>Name</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            {% for category in categories %}
+                <tr>
+                    <!-- todo -->
+                    <td>{{ loop.index }}</td>
+                    <td><a href="{{ url_for('blog.show_category', category_id=category.id) }}" target="_blank">{{ category.name }}</a></td>
+                    <td>
+                        <a href="{{ url_for('admin.edit_category', category_id=category.id) }}" class="btn btn-info btn-sm">Edit</a>
+                        <form class="inline" method="post" action="{{ url_for('admin.delete_category', category_id=category.id, next=request.full_path) }}">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <div class="tip"><h5>No categories.</h5></div>
+    {% endif %}
+{% endblock %}

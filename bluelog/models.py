@@ -30,6 +30,13 @@ class Category(db.Model):
 
     posts = relationship("Post", back_populates="category")
 
+    def delete(self):
+        default_category = self.query.first()
+        for post in self.posts[:]:
+            post.category = default_category
+        db.session.delete(self)
+        db.session.commit()
+
 
 class Post(db.Model):
     id = mapped_column(Integer, primary_key=True, autoincrement=True)
@@ -60,3 +67,10 @@ class Comment(db.Model):
     replied_id = mapped_column(Integer, ForeignKey("comment.id"))
     replied = relationship("Comment", back_populates="replies", remote_side=[id])
     replies = relationship("Comment", back_populates="replied", cascade="all")
+
+
+class Link(db.Model):
+    id = mapped_column(Integer, primary_key=True, autoincrement=True)
+    name = mapped_column(String(60))
+    url = mapped_column(String(255))
+    timestamp = mapped_column(DateTime, default=datetime.utcnow, index=True)

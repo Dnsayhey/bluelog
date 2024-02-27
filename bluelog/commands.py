@@ -2,7 +2,7 @@ import click
 from flask import Flask
 
 from bluelog.extensions import db
-from bluelog.fakes import fake_admin, fake_categories, fake_comments, fake_posts
+from bluelog.fakes import fake_admin, fake_categories, fake_comments, fake_posts, fake_links
 from bluelog.models import Admin, Category
 
 
@@ -25,6 +25,7 @@ def register_commands(app: Flask):
         fake_categories(category)
         fake_posts(post)
         fake_comments(comment)
+        fake_links()
 
         click.echo("Done!")
 

@@ -42,21 +42,29 @@
                             New
                         </a>
                         <div class="dropdown-menu">
-                            <a class="dropdown-item" href="#">Category</a>
+                            <a class="dropdown-item" href="{{ url_for('admin.new_category' ) }}">Category</a>
                             <a class="dropdown-item" href="{{ url_for('admin.new_post') }}">Post</a>
-                            <a class="dropdown-item" href="#">Link</a>
+                            <a class="dropdown-item" href="{{ url_for('admin.new_link') }}">Link</a>
                         </div>
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown"
                             aria-expanded="false">
                             Manage
+                            {% if unread_comments %}
+                            <span class="badge badge-success">New</span>
+                            {% endif %}
+                            
                         </a>
                         <div class="dropdown-menu">
-                            <a class="dropdown-item" href="#">Category</a>
+                            <a class="dropdown-item" href="{{ url_for('admin.manage_category' ) }}">Category</a>
                             <a class="dropdown-item" href="{{ url_for('admin.manage_post') }}">Post</a>
-                            <a class="dropdown-item" href="#">Comment</a>
-                            <a class="dropdown-item" href="#">Link</a>
+                            <a class="dropdown-item" href="{{ url_for('admin.manage_comment') }}">Comment
+                                {% if unread_comments %}
+                                <span class="badge badge-success">{{ unread_comments }}</span>
+                                {% endif %}
+                            </a>
+                            <a class="dropdown-item" href="{{ url_for('admin.manage_link') }}">Link</a>
                         </div>
                     </li>
                     <li class="nav-item">

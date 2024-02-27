@@ -30,7 +30,7 @@ class LoginForm(FlaskForm):
 
 class CategoryForm(FlaskForm):
     name = StringField("Name", validators=[DataRequired(), Length(1, 30)])
-    submit = SubmitField("Create")
+    submit = SubmitField()
 
     def validate_name(self, field):
         if Category.query.filter_by(name=field.data).first():
@@ -72,4 +72,10 @@ class SettingsForm(FlaskForm):
     blog_sub_title = StringField("Blog Sub Title", validators=[DataRequired(), Length(1, 100)])
     # about = CKEditorField("About", validators=[DataRequired()])
     about = TextAreaField("About", validators=[DataRequired()])
+    submit = SubmitField("Save")
+
+
+class LinkForm(FlaskForm):
+    name = StringField("Name", validators=[DataRequired(), Length(1, 60)])
+    url = StringField("URL", validators=[DataRequired(), URL()])
     submit = SubmitField("Save")

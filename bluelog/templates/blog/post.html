@@ -103,6 +103,7 @@
             </div>
             {% endif %}
         </div>
+        {% if post.can_comment %}
         <div id="comment-form">
             {% if request.args.get('reply') %}
                 <div class="alert alert-dark">
@@ -112,6 +113,9 @@
             {% endif %}
             {{ render_form(form, method="post", action=request.full_path) }}
         </div>
+        {% else %}
+        <div class="tip"><h5>Comment disabled.</h5></div>
+        {% endif %}
     </div>
     <div class="col-sm-4">
         {% include 'blog/_sidebar.html' %}

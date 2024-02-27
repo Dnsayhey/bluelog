@@ -81,6 +81,8 @@ def show_post(post_id):
         reviewed = False
 
     if form.validate_on_submit():
+        if not post.can_comment:
+            abort(400)
         comment = Comment(
             author=form.author.data,
             body=form.body.data,
@@ -118,6 +120,8 @@ def about():
 @blog_bp.route("/reply/comment/<int:comment_id>")
 def reply_comment(comment_id):
     comment = Comment.query.get_or_404(comment_id)
+    if not comment.post.can_comment:
+        flash("Comment disabled.", "warning")
     return redirect(
         url_for(
             "blog.show_post",

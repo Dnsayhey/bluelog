@@ -4,7 +4,7 @@ from flask import Flask
 
 from bluelog.commands import register_commands
 from bluelog.extensions import bootstrap, ckeditor, db, mail, moment, login_manager, csrf
-from bluelog.models import Admin, Category
+from bluelog.models import Admin, Category, Link, Comment
 from bluelog.settings import config
 from bluelog.views.admin import admin_bp
 from bluelog.views.auth import auth_bp
@@ -34,7 +34,9 @@ def register_template_context(app: Flask):
     def inject_common_objects():
         admin = Admin.query.first()
         categories = Category.query.all()
-        return dict(admin=admin, categories=categories)
+        links = Link.query.all()
+        unread_comments = Comment.query.filter_by(reviewed=False).count()
+        return dict(admin=admin, categories=categories, links=links, unread_comments=unread_comments)
 
 
 def create_app(config_name=None):
