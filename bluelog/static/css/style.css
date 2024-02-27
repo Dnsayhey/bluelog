@@ -14,3 +14,7 @@
 .footer {
     border: black;
 }
+
+.inline {
+    display: inline;
+}

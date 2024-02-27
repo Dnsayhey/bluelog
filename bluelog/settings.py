@@ -26,6 +26,9 @@ class BaseConfig(object):
     BLUELOG_COMMENT_PER_PAGE = 15
     BLUELOG_THEMES = {"perfect_blue": "Perfect Blue", "black_swan": "Black Swan"}
 
+    # CKEDITOR_SERVE_LOCAL = True
+    CKEDITOR_PKG_TYPE = "basic"
+
 
 class DevelopmentConfig(BaseConfig):
     SQLALCHEMY_DATABASE_URI = prefix + os.path.join(basedir, "bluelog-dev.sqlite")

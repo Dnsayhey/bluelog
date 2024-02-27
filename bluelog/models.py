@@ -1,9 +1,9 @@
 from datetime import datetime
 
+from flask_login import UserMixin
 from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import mapped_column, relationship
 from werkzeug.security import check_password_hash, generate_password_hash
-from flask_login import UserMixin
 
 from bluelog.extensions import db
 
@@ -36,6 +36,7 @@ class Post(db.Model):
     title = mapped_column(String(60))
     body = mapped_column(Text)
     timestamp = mapped_column(DateTime, default=datetime.utcnow)
+    can_comment = mapped_column(Boolean, default=True)
 
     category_id = mapped_column(Integer, ForeignKey("category.id"))
     category = relationship("Category", back_populates="posts")
