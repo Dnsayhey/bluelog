@@ -37,5 +37,5 @@ def login():
 @login_required
 def logout():
     logout_user()
-    flash("Logout success.", "info")
+    flash("Logout info.", "info")
     return redirect_back()

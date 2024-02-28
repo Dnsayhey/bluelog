@@ -1,18 +1,12 @@
 {% extends 'base.html' %}
-{% from 'bootstrap4/form.html' import render_field  %}
+{% from 'bootstrap4/form.html' import render_form  %}
 
 {% block title %}Edit Post{% endblock %}
 {% block content %}
     <div class="page-header">
         <h1>Edit Post</h1>
     </div>
-    <form action="{{ url_for('admin.edit_post') }}" method="post">
-        {{ form.csrf_token() }}
-        {{ render_field(form.title) }}
-        {{ render_field(form.body) }}
-        {{ render_field(form.category) }}
-        {{ render_field(form.submit) }}
-    </form>
+    {{ render_form(form) }}
 {% endblock %}
 
 {% block script %}

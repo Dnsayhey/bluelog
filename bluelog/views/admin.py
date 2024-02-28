@@ -1,3 +1,5 @@
+import os
+
 from flask import (
     Blueprint,
     current_app,
@@ -6,13 +8,15 @@ from flask import (
     render_template,
     request,
     url_for,
+    send_from_directory,
 )
 from flask_login import current_user, login_required
+from flask_ckeditor import upload_success, upload_fail
 
 from bluelog.extensions import db
 from bluelog.forms import CategoryForm, LinkForm, PostForm, SettingsForm
 from bluelog.models import Category, Comment, Link, Post
-from bluelog.utils import redirect_back
+from bluelog.utils import redirect_back, allowed_file
 
 admin_bp = Blueprint("admin", __name__)
 
@@ -69,7 +73,7 @@ def new_post():
         post = Post(title=title, body=body, category=category)
         db.session.add(post)
         db.session.commit()
-        flash("Post created.", "success")
+        flash("Post created.", "info")
         return redirect(url_for("blog.show_post", post_id=post.id))
     return render_template("admin/new_post.html", form=form)
 
@@ -88,7 +92,7 @@ def edit_post(post_id):
         post.body = body
         post.category = category
         db.session.commit()
-        flash("Post updated.", "success")
+        flash("Post updated.", "info")
         return redirect(url_for("blog.show_post", post_id=post.id))
 
     form.title.data = post.title
@@ -139,7 +143,7 @@ def approve_comment(comment_id):
     comment = Comment.query.get_or_404(comment_id)
     comment.reviewed = True
     db.session.commit()
-    flash("Comment published.", "success")
+    flash("Comment published.", "info")
     return redirect_back()
 
 
@@ -163,7 +167,7 @@ def new_link():
         link = Link(name=form.name.data, url=form.url.data)
         db.session.add(link)
         db.session.commit()
-        flash("Link created.", "success")
+        flash("Link created.", "info")
         return redirect(url_for("blog.index"))
 
     return render_template("admin/new_link.html", form=form)
@@ -177,7 +181,7 @@ def edit_link(link_id):
         link.name = form.name.data
         link.url = form.url.data
         db.session.commit()
-        flash("Link updated.", "success")
+        flash("Link updated.", "info")
         return redirect(url_for("admin.manage_link"))
 
     form.name.data = link.name
@@ -187,8 +191,7 @@ def edit_link(link_id):
 
 @admin_bp.route("/link/manage")
 def manage_link():
-    links = Link.query.all()
-    return render_template("admin/manage_link.html", links=links)
+    return render_template("admin/manage_link.html")
 
 
 @admin_bp.route("/link/<int:link_id>/delete", methods=["POST"])
@@ -196,7 +199,7 @@ def delete_link(link_id):
     link = Link.query.get_or_404(link_id)
     db.session.delete(link)
     db.session.commit()
-    flash("Link deleted.", "success")
+    flash("Link deleted.", "info")
     return redirect_back()
 
 
@@ -207,7 +210,7 @@ def new_category():
         category = Category(name=form.name.data)
         db.session.add(category)
         db.session.commit()
-        flash("Category created.", "success")
+        flash("Category created.", "info")
         return redirect(url_for("blog.index"))
 
     return render_template("admin/new_category.html", form=form)
@@ -220,7 +223,7 @@ def edit_category(category_id):
     if form.validate_on_submit():
         category.name = form.name.data
         db.session.commit()
-        flash("Category updated.", "success")
+        flash("Category updated.", "info")
         return redirect(url_for("admin.manage_category"))
     form.name.data = category.name
     return render_template("admin/edit_category.html", form=form)
@@ -228,8 +231,7 @@ def edit_category(category_id):
 
 @admin_bp.route("/category/manage")
 def manage_category():
-    categories = Category.query.all()
-    return render_template("admin/manage_category.html", categories=categories)
+    return render_template("admin/manage_category.html")
 
 
 @admin_bp.route("/category/<int:category_id>/delete", methods=["POST"])
@@ -239,5 +241,22 @@ def delete_category(category_id):
         flash("You can not delete the default category.", "warning")
         return redirect_back()
     category.delete()
-    flash("Category deleted.", "success")
+    flash("Category deleted.", "info")
     return redirect_back()
+
+
+@admin_bp.route("/upload", methods=["POST"])
+def upload_image():
+    f = request.files.get("upload")
+    if not allowed_file(f.filename):
+        return upload_fail("Image only!")
+    f.save(os.path.join(current_app.config["BLUELOG_UPLOAD_PATH"], f.filename))
+    url = url_for(".get_image", filename=f.filename)
+    return upload_success(url, f.filename)
+
+
+@admin_bp.route("/uploads/<path:filename>")
+def get_image(filename):
+    return send_from_directory(
+        current_app.config["BLUELOG_UPLOAD_PATH"], filename
+    )

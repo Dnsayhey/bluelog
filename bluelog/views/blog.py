@@ -102,7 +102,7 @@ def show_post(post_id):
         db.session.add(comment)
         db.session.commit()
         if current_user.is_authenticated:
-            flash("Comment published.", "success")
+            flash("Comment published.", "info")
         else:
             flash("Thanks, your comment will be published after reviewed.", "info")
             send_new_comment_email(post)

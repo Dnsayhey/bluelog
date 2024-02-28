@@ -28,7 +28,6 @@
                 <ul class="navbar-nav mr-auto">
                     <li class="nav-item">
                         {{ render_nav_item('blog.index', "Home") }}
-                        <!-- <a href="/" class="nav-link">Home</a> -->
                     </li>
                     <li class="nav-item">
                         {{ render_nav_item('blog.about', "About") }}
@@ -110,8 +109,8 @@
     <script src="{{ url_for('static', filename="js/jquery.slim.min.js") }}"></script>
     <script src="{{ url_for('static', filename="js/popper.min.js") }}"></script>
     <script src="{{ url_for('static', filename="js/bootstrap.min.js") }}"></script>
-    <!-- <script src="{{ url_for('static', filename="js/moment-with-locales.min.js") }}"></script> -->
     <script src="{{ url_for('static', filename="js/script.js") }}"></script>
+    {{ moment.include_moment(local_js=url_for('static', filename='js/moment-with-locales.min.js')) }}
     {% endblock script %}
 </body>
 

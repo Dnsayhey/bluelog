@@ -17,5 +17,6 @@
 
 {% block script %}
     {{ super() }}
-    {{ ckeditor.load() }}
+    <script type="text/javascript" src="{{ url_for('static', filename='ckeditor/ckeditor.js') }}"></script>
+    {{ ckeditor.config(name='body') }}
 {% endblock %}

@@ -34,7 +34,7 @@ class PostForm(FlaskForm):
     title = StringField("Title", validators=[DataRequired(), Length(1, 60)])
     body = CKEditorField("Body", validators=[DataRequired()])
     category = SelectField("Category", coerce=int, default=1)
-    submit = SubmitField("Post")
+    submit = SubmitField()
 
     def __init__(self, *args, **kwargs):
         super(PostForm, self).__init__(*args, **kwargs)
@@ -65,10 +65,10 @@ class SettingsForm(FlaskForm):
         "Blog Subtitle", validators=[DataRequired(), Length(1, 100)]
     )
     about = CKEditorField("About", validators=[DataRequired()])
-    submit = SubmitField("Save")
+    submit = SubmitField()
 
 
 class LinkForm(FlaskForm):
     name = StringField("Name", validators=[DataRequired(), Length(1, 60)])
     url = StringField("URL", validators=[DataRequired(), URL()])
-    submit = SubmitField("Save")
+    submit = SubmitField()
