@@ -8,13 +8,14 @@ authors = [
 dependencies = [
     "flask>=3.0.2",
     "flask-sqlalchemy>=3.1.1",
-    "flask-mail>=0.9.1",
     "flask-ckeditor>=0.5.1",
     "flask-moment>=1.0.5",
     "bootstrap-flask>=2.3.3",
     "python-dotenv>=1.0.1",
     "flask-wtf>=1.2.1",
     "flask-login>=0.6.3",
+    "pymysql>=1.1.0",
+    "flask-mailman>=1.0.0",
 ]
 requires-python = ">=3.8"
 readme = "README.md"
@@ -28,4 +29,5 @@ distribution = false
 dev = [
     "watchdog>=4.0.0",
     "faker>=23.2.1",
+    "flask-debugtoolbar>=0.14.1",
 ]

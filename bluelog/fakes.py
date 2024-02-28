@@ -4,7 +4,7 @@ from faker import Faker
 from sqlalchemy.exc import IntegrityError
 
 from bluelog.extensions import db
-from bluelog.models import Admin, Category, Comment, Post, Link
+from bluelog.models import Admin, Category, Comment, Link, Post
 
 fake = Faker()
 
@@ -38,7 +38,7 @@ def fake_categories(count=10):
 def fake_posts(count=50):
     for i in range(count):
         post = Post(
-            title=fake.sentence(),
+            title=fake.text(60),
             body=fake.text(2000),
             category=Category.query.get(random.randint(1, Category.query.count())),
             timestamp=fake.date_time_this_year(),

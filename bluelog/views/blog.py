@@ -1,18 +1,20 @@
 from flask import (
     Blueprint,
+    abort,
+    current_app,
+    flash,
+    make_response,
+    redirect,
     render_template,
     request,
-    current_app,
     url_for,
-    flash,
-    redirect,
-    abort,
-    make_response
 )
+from flask_login import current_user
 
 from bluelog import db
-from bluelog.models import Category, Post, Comment
-from bluelog.forms import CommentForm, AdminCommentForm
+from bluelog.emails import send_new_comment_email, send_new_reply_email
+from bluelog.forms import AdminCommentForm, CommentForm
+from bluelog.models import Category, Comment, Post
 from bluelog.utils import redirect_back
 
 blog_bp = Blueprint("blog", __name__)
@@ -67,10 +69,9 @@ def show_post(post_id):
     )
     comments = pagination.items
 
-    current_user_login = True
-    if current_user_login:
+    if current_user.is_authenticated:
         form = AdminCommentForm()
-        form.author.data = "test"
+        form.author.data = current_user.name
         form.email.data = current_app.config["BLUELOG_EMAIL"]
         form.site.data = url_for("blog.index")
         from_admin = True
@@ -90,21 +91,21 @@ def show_post(post_id):
             site=form.site.data,
             from_admin=from_admin,
             reviewed=reviewed,
-            post_id=post_id
+            post_id=post_id,
         )
         replied_comment_id = request.args.get("reply")
         if replied_comment_id:
             replied_comment = Comment.query.get_or_404(replied_comment_id)
             comment.replied = replied_comment
-            # todo send_email
+            send_new_reply_email(replied_comment)
+
         db.session.add(comment)
         db.session.commit()
-        if current_user_login:
+        if current_user.is_authenticated:
             flash("Comment published.", "success")
         else:
             flash("Thanks, your comment will be published after reviewed.", "info")
-            # todo send_email
-        print("-----------", url_for("blog.show_post", post_id=post_id))
+            send_new_comment_email(post)
         return redirect(url_for("blog.show_post", post_id=post_id))
 
     return render_template(

@@ -11,7 +11,7 @@ from bluelog.extensions import db
 class Admin(db.Model, UserMixin):
     id = mapped_column(Integer, primary_key=True, autoincrement=True)
     username = mapped_column(String(20), unique=True)
-    password_hash = mapped_column(String(128))
+    password_hash = mapped_column(String(256))
     blog_title = mapped_column(String(60))
     blog_sub_title = mapped_column(String(100))
     name = mapped_column(String(30))
@@ -44,10 +44,9 @@ class Post(db.Model):
     body = mapped_column(Text)
     timestamp = mapped_column(DateTime, default=datetime.utcnow)
     can_comment = mapped_column(Boolean, default=True)
-
     category_id = mapped_column(Integer, ForeignKey("category.id"))
-    category = relationship("Category", back_populates="posts")
 
+    category = relationship("Category", back_populates="posts")
     comments = relationship("Comment", backref="post", cascade="all")
 
 
@@ -60,11 +59,9 @@ class Comment(db.Model):
     from_admin = mapped_column(Boolean, default=False)
     reviewed = mapped_column(Boolean, default=False)
     timestamp = mapped_column(DateTime, default=datetime.utcnow, index=True)
-
     post_id = mapped_column(Integer, ForeignKey("post.id"))
-    # post = relationship("Post", back_populates="comments")  # 加了会报错 后面来分析一下
-
     replied_id = mapped_column(Integer, ForeignKey("comment.id"))
+
     replied = relationship("Comment", back_populates="replies", remote_side=[id])
     replies = relationship("Comment", back_populates="replied", cascade="all")
 

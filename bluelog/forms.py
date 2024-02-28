@@ -1,22 +1,15 @@
-from flask_wtf import FlaskForm
 from flask_ckeditor import CKEditorField
+from flask_wtf import FlaskForm
 from wtforms import (
-    StringField,
-    PasswordField,
     BooleanField,
-    SubmitField,
-    SelectField,
-    TextAreaField,
     HiddenField,
+    PasswordField,
+    SelectField,
+    StringField,
+    SubmitField,
+    TextAreaField,
 )
-from wtforms.validators import (
-    DataRequired,
-    Length,
-    ValidationError,
-    Email,
-    URL,
-    Optional,
-)
+from wtforms.validators import URL, DataRequired, Length, Optional, ValidationError
 
 from bluelog.models import Category
 
@@ -53,7 +46,6 @@ class PostForm(FlaskForm):
 
 class CommentForm(FlaskForm):
     author = StringField("Name", validators=[DataRequired(), Length(1, 30)])
-    # email = StringField("Email", validators=[DataRequired(), Email(), Length(1, 254)])
     email = StringField("Email", validators=[DataRequired(), Length(1, 254)])
     site = StringField("Site", validators=[Optional(), URL(), Length(0, 255)])
     body = TextAreaField("Comment", validators=[DataRequired()])
@@ -69,9 +61,10 @@ class AdminCommentForm(CommentForm):
 class SettingsForm(FlaskForm):
     name = StringField("Name", validators=[DataRequired(), Length(1, 30)])
     blog_title = StringField("Blog Title", validators=[DataRequired(), Length(1, 60)])
-    blog_sub_title = StringField("Blog Sub Title", validators=[DataRequired(), Length(1, 100)])
-    # about = CKEditorField("About", validators=[DataRequired()])
-    about = TextAreaField("About", validators=[DataRequired()])
+    blog_sub_title = StringField(
+        "Blog Subtitle", validators=[DataRequired(), Length(1, 100)]
+    )
+    about = CKEditorField("About", validators=[DataRequired()])
     submit = SubmitField("Save")
 
 

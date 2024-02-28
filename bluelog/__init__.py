@@ -3,8 +3,17 @@ import os
 from flask import Flask
 
 from bluelog.commands import register_commands
-from bluelog.extensions import bootstrap, ckeditor, db, mail, moment, login_manager, csrf
-from bluelog.models import Admin, Category, Link, Comment
+from bluelog.extensions import (
+    bootstrap,
+    ckeditor,
+    csrf,
+    db,
+    login_manager,
+    mail,
+    moment,
+    toolbar,
+)
+from bluelog.models import Admin, Category, Comment, Link
 from bluelog.settings import config
 from bluelog.views.admin import admin_bp
 from bluelog.views.auth import auth_bp
@@ -27,6 +36,7 @@ def register_extensions(app: Flask):
     moment.init_app(app)
     login_manager.init_app(app)
     csrf.init_app(app)
+    toolbar.init_app(app)
 
 
 def register_template_context(app: Flask):
@@ -36,7 +46,12 @@ def register_template_context(app: Flask):
         categories = Category.query.all()
         links = Link.query.all()
         unread_comments = Comment.query.filter_by(reviewed=False).count()
-        return dict(admin=admin, categories=categories, links=links, unread_comments=unread_comments)
+        return dict(
+            admin=admin,
+            categories=categories,
+            links=links,
+            unread_comments=unread_comments,
+        )
 
 
 def create_app(config_name=None):

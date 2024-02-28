@@ -2,7 +2,13 @@ import click
 from flask import Flask
 
 from bluelog.extensions import db
-from bluelog.fakes import fake_admin, fake_categories, fake_comments, fake_posts, fake_links
+from bluelog.fakes import (
+    fake_admin,
+    fake_categories,
+    fake_comments,
+    fake_links,
+    fake_posts,
+)
 from bluelog.models import Admin, Category
 
 
@@ -17,6 +23,7 @@ def register_commands(app: Flask):
         "--comment", default=500, help="Quantity of comments, default is 500."
     )
     def forge(category, post, comment):
+        print(db)
         """Forge: admin categories posts comments"""
         db.drop_all()
         db.create_all()
@@ -53,9 +60,9 @@ def register_commands(app: Flask):
             db.session.add(admin)
 
         category = Category.query.first()
-        if Category is None:
+        if category is None:
             click.echo("Create default category...")
-            category = Category(name="default")
+            category = Category(name="Default")
             db.session.add(category)
 
         db.session.commit()

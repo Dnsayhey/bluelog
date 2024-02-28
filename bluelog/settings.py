@@ -1,3 +1,4 @@
+import datetime
 import os
 import sys
 
@@ -22,12 +23,16 @@ class BaseConfig(object):
 
     BLUELOG_EMAIL = os.getenv("BLUELOG_EMAIL")
     BLUELOG_POST_PER_PAGE = 10
-    BLUELOG_MANAGE_POST_PER_PAGE = 15
-    BLUELOG_COMMENT_PER_PAGE = 15
+    BLUELOG_MANAGE_POST_PER_PAGE = 20
+    BLUELOG_COMMENT_PER_PAGE = 20
     BLUELOG_THEMES = {"perfect_blue": "Perfect Blue", "black_swan": "Black Swan"}
 
-    # CKEDITOR_SERVE_LOCAL = True
     CKEDITOR_PKG_TYPE = "basic"
+
+    DEBUG_TB_INTERCEPT_REDIRECTS = False
+
+    PERMANENT_SESSION_LIFETIME = datetime.timedelta(days=31)
+    REMEMBER_COOKIE_DURATION = datetime.timedelta(days=31)
 
 
 class DevelopmentConfig(BaseConfig):

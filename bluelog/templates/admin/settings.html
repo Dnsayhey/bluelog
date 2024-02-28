@@ -8,3 +8,8 @@
         {{ render_form(form) }}
     </div>
 {% endblock %}
+
+{% block script %}
+    {{ super() }}
+    {{ ckeditor.load() }}
+{% endblock %}

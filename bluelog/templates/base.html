@@ -88,6 +88,11 @@
         {% block content %}{% endblock content %}
         {% block footer %}
         <footer class="footer">
+            <small class="float-left">
+                &copy; 2024
+                <a href="https://zeronb.top">Zero's Blog</a>
+                <a href="https://github.com/Dnsayhey">Github</a>
+            </small>
             {% if request.endpoint != "auth.login" %}
             <small class="float-right">
                 {% if current_user.is_authenticated %}

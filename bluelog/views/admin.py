@@ -10,8 +10,8 @@ from flask import (
 from flask_login import current_user, login_required
 
 from bluelog.extensions import db
-from bluelog.forms import PostForm, SettingsForm, CategoryForm, LinkForm
-from bluelog.models import Category, Comment, Post, Link
+from bluelog.forms import CategoryForm, LinkForm, PostForm, SettingsForm
+from bluelog.models import Category, Comment, Link, Post
 from bluelog.utils import redirect_back
 
 admin_bp = Blueprint("admin", __name__)
@@ -94,7 +94,7 @@ def edit_post(post_id):
     form.title.data = post.title
     form.body.data = post.body
     form.category.data = post.category_id
-    return render_template("admin/new_post.html", form=form)
+    return render_template("admin/edit_post.html", form=form)
 
 
 @admin_bp.route("/post/<int:post_id>/delete", methods=["POST"])
@@ -116,10 +116,14 @@ def manage_comment():
         query = Comment.query.filter_by(from_admin=True)
     else:
         query = Comment.query
-    pagination = query.order_by(Comment.timestamp.desc()).paginate(page=page, per_page=per_page)
+    pagination = query.order_by(Comment.timestamp.desc()).paginate(
+        page=page, per_page=per_page
+    )
     comments = pagination.items
 
-    return render_template("admin/manage_comment.html", pagination=pagination, comments=comments)
+    return render_template(
+        "admin/manage_comment.html", pagination=pagination, comments=comments
+    )
 
 
 @admin_bp.route("/comment/<int:comment_id>/delete", methods=["POST"])
@@ -160,8 +164,8 @@ def new_link():
         db.session.add(link)
         db.session.commit()
         flash("Link created.", "success")
-        return redirect(url_for('blog.index'))
-    
+        return redirect(url_for("blog.index"))
+
     return render_template("admin/new_link.html", form=form)
 
 
@@ -220,7 +224,7 @@ def edit_category(category_id):
         return redirect(url_for("admin.manage_category"))
     form.name.data = category.name
     return render_template("admin/edit_category.html", form=form)
-    
+
 
 @admin_bp.route("/category/manage")
 def manage_category():
