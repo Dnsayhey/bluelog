@@ -41,7 +41,7 @@
         <td>{{ comment.author }}<br><a href="{{ comment.site }}">{{ comment.site }}</a><br><a
                 href="mailto:{{ comment.email }}">{{ comment.email }}</a></td>
         <td>{{ comment.body }}</td>
-        <td>{{ comment.timestamp }}</td>
+        <td>{{ moment(comment.timestamp).format("LLL") }}</td>
         <td>
             <a href="{{ url_for('blog.show_post', post_id=comment.post_id) }}" class="btn btn-info btn-sm">Post</a>
             <form class="inline" method="post"

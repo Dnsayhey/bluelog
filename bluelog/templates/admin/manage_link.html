@@ -16,17 +16,14 @@
                     <th>No.</th>
                     <th>Name</th>
                     <th>URL</th>
-                    <!-- <th>Date</th> -->
                     <th>Actions</th>
                 </tr>
             </thead>
             {% for link in links %}
                 <tr>
-                    <!-- todo -->
                     <td>{{ loop.index }}</td>
                     <td><a href="{{ link.url }}" target="_blank">{{ link.name }}</a></td>
                     <td><a href="{{ link.url }}" target="_blank">{{ link.url }}</a></td>
-                    <!-- <td>{{ link.timestamp }}</td> -->
                     <td>
                         <a href="{{ url_for('admin.edit_link', link_id=link.id) }}" class="btn btn-info btn-sm">Edit</a>
                         <form class="inline" method="post" action="{{ url_for('admin.delete_link', link_id=link.id, next=request.full_path) }}">
